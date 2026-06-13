@@ -1,38 +1,13 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>SplitRoyalty</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-[#0f0f23] text-white min-h-screen">
-  <nav class="border-b border-purple-900/30 px-6 py-4 flex justify-between items-center">
-    <div class="flex items-center gap-2"><span class="text-2xl">🎵</span><h1 class="text-xl font-bold">SplitRoyalty</h1></div>
-  </nav>
-  <main class="max-w-3xl mx-auto p-6 space-y-6">
-    <!-- Create Project -->
-    <section class="bg-purple-950/20 rounded-2xl p-6 border border-purple-900/30">
-      <h2 class="text-purple-300 font-semibold mb-4">New Collaboration</h2>
-      <input placeholder="Project title" class="w-full bg-black/30 border border-purple-900/30 rounded-xl px-4 py-3 mb-3 placeholder-gray-600 outline-none">
-      <textarea placeholder='Contributors JSON: [{"name":"Alice","role":"lyrics"},{"name":"Bob","role":"production"}]' rows="3" class="w-full bg-black/30 border border-purple-900/30 rounded-xl px-4 py-3 mb-3 placeholder-gray-600 outline-none resize-none"></textarea>
-      <input placeholder="Description" class="w-full bg-black/30 border border-purple-900/30 rounded-xl px-4 py-3 mb-3 placeholder-gray-600 outline-none">
-      <button class="w-full bg-purple-600 hover:bg-purple-500 rounded-xl py-3 font-bold transition">Create Project</button>
-    </section>
-
-    <!-- Result with visual pie -->
-    <section class="bg-purple-950/20 rounded-2xl p-6 border border-purple-900/30">
-      <h2 class="text-pink-300 font-semibold mb-4">Splits — "Beat Tape"</h2>
-      <div class="flex items-center gap-6">
-        <!-- Simple CSS pie chart -->
-        <div class="w-32 h-32 rounded-full relative" style="background: conic-gradient(#a855f7 0% 60%, #ec4899 60% 100%)">
-          <div class="absolute inset-3 bg-[#0f0f23] rounded-full flex items-center justify-center text-xs">AI Judged</div>
-        </div>
-        <div class="space-y-3">
-          <div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full bg-purple-500"></div><span>Ali (producer) — <b>60%</b></span></div>
-          <div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full bg-pink-500"></div><span>Sara (vocalist) — <b>40%</b></span></div>
-        </div>
-      </div>
-    </section>
-  </main>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="SplitRoyalty — AI judges fair contribution splits for creative collaborations. Resolve who gets what, on-chain." />
+    <title>SplitRoyalty — AI Royalty Splits for Creators</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
 </html>
