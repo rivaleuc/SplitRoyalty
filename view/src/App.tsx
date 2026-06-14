@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Toaster, toast } from "sonner";
+import { connectWallet, isWalletConnected } from "./genlayer";
 
 const CONTRACT = "0x2CFfF7dDEcc90C2b72e5BD19B1003Ef688cCb7C7";
 
@@ -192,6 +193,17 @@ function App() {
   const [channels, setChannels] = useState<Channel[]>(DEFAULT_CHANNELS);
   const [judged, setJudged] = useState(false);
   const [judging, setJudging] = useState(false);
+  const [wallet, setWallet] = useState<string | null>(null);
+
+  async function handleConnect() {
+    try {
+      const addr = await connectWallet();
+      setWallet(addr);
+      toast.success("Wallet connected", { description: `${addr.slice(0, 6)}…${addr.slice(-4)}` });
+    } catch (e: any) {
+      toast.error("Wallet connection failed", { description: e?.message ?? String(e) });
+    }
+  }
 
   const update = (id: number, patch: Partial<Channel>) => {
     setChannels((cs) => cs.map((c) => (c.id === id ? { ...c, ...patch } : c)));
@@ -270,6 +282,16 @@ function App() {
             </div>
           </div>
           <div className="flex items-center gap-2 font-mono text-[10px] text-purple-300/50">
+            <button
+              onClick={handleConnect}
+              className={`rounded-full px-3 py-1.5 text-[10px] font-bold transition ${
+                (wallet ?? isWalletConnected())
+                  ? "border border-[#5EE6C5]/40 bg-[#5EE6C5]/10 text-[#5EE6C5]"
+                  : "bg-[#FFD700] text-[#1A0B2E] hover:brightness-110"
+              }`}
+            >
+              {wallet ? `${wallet.slice(0, 6)}…${wallet.slice(-4)}` : "Connect Wallet"}
+            </button>
             <span
               className={`h-2 w-2 rounded-full ${
                 judging ? "animate-pulse bg-[#FFD700]" : "bg-[#5EE6C5]"
