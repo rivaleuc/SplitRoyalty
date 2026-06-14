@@ -15,11 +15,6 @@ Judging creative contribution is inherently subjective:
 
 **GenLayer (Bradbury):** `0x2CFfF7dDEcc90C2b72e5BD19B1003Ef688cCb7C7`
 
-## Test result
-
-Project: "Beat Tape" — Ali (producer) + Sara (vocalist)
-→ **Ali: 60% / Sara: 40%** — AI judged production as higher creative weight.
-
 ## Structure
 
 ```
