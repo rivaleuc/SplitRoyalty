@@ -4,8 +4,8 @@
 
 SplitRoyalty settles the hardest conversation in any collaboration: who gets what slice. A creator lists the contributors and their roles; GenLayer validators weigh the creative and technical contribution of each role and reach consensus on a split that sums to exactly 100% — an impartial judge instead of an argument, recorded on-chain for an EVM splitter to pay out against.
 
-- **Contract (Bradbury, chain 4221):** `0x2CFfF7dDEcc90C2b72e5BD19B1003Ef688cCb7C7`
-- **Explorer:** https://explorer-bradbury.genlayer.com/contract/0x2CFfF7dDEcc90C2b72e5BD19B1003Ef688cCb7C7
+- **Contract (Bradbury, chain 4221):** `0x043476C5f3cD1AC2304100444651766EE4C1A590`
+- **Explorer:** https://explorer-bradbury.genlayer.com/contract/0x043476C5f3cD1AC2304100444651766EE4C1A590
 - **Live app:** https://splitroyalty.pages.dev
 
 ## What it does

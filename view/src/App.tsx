@@ -26,14 +26,6 @@ const ROLES: Role[] = [
   "Mixing Engineer",
 ];
 
-const ROLE_WEIGHT: Record<Role, number> = {
-  Songwriter: 30,
-  Producer: 26,
-  Vocalist: 24,
-  Instrumentalist: 14,
-  "Mixing Engineer": 10,
-};
-
 const STRIP_COLORS = [
   "#FFD700",
   "#C77DFF",
@@ -51,21 +43,6 @@ const DEFAULT_CHANNELS: Channel[] = [
   { id: 2, name: "DJ Kovac", role: "Producer", gain: 65, pct: null },
   { id: 3, name: "Lena S.", role: "Vocalist", gain: 60, pct: null },
 ];
-
-function computeSplit(channels: Channel[]): number[] {
-  const weights = channels.map((c) => {
-    const base = ROLE_WEIGHT[c.role] ?? 12;
-    return base * (0.6 + c.gain / 100); // gain nudges the verdict
-  });
-  const total = weights.reduce((s, w) => s + w, 0) || 1;
-  const rounded = weights.map((w) => Math.round((w / total) * 100));
-  const drift = 100 - rounded.reduce((s, x) => s + x, 0);
-  if (rounded.length) {
-    const maxIdx = rounded.reduce((mi, x, i, a) => (x > a[mi] ? i : mi), 0);
-    rounded[maxIdx] += drift;
-  }
-  return rounded;
-}
 
 /* ----- A single mixer channel strip ----- */
 function ChannelStrip({
@@ -237,7 +214,11 @@ function App() {
     try {
       const contributors = named.map((c) => ({ name: c.name.trim(), role: c.role }));
       const title = `Studio Session — ${named.map((c) => c.name.trim()).join(", ").slice(0, 60)}`;
-      const description = named.map((c) => `${c.name.trim()}: ${c.role}`).join("; ");
+      // tracking level is sent on-chain inside the description, which the
+      // contract feeds into the AI judging prompt — so the faders are real.
+      const description = named
+        .map((c) => `${c.name.trim()}: ${c.role} (tracking level ${c.gain}/100)`)
+        .join("; ");
       // 1) create the project on-chain
       await write("create_project", [title, JSON.stringify(contributors), description]);
       // 2) locate it
@@ -446,9 +427,9 @@ function App() {
                 On-chain settlement
               </h3>
               <p className="text-xs leading-relaxed text-purple-300/60">
-                When the mix is locked, push the fader levels straight to the
-                royalty contract. Payouts then flow automatically to every
-                channel.
+                Bouncing the mix records the project and runs the AI judge on the
+                royalty contract. Each contributor's percentage is stored on-chain
+                and read back live into the faders below — no off-chain math.
               </p>
             </div>
             <div className="mt-4">
@@ -456,16 +437,15 @@ function App() {
                 contract&nbsp;
                 <span className="text-[#FFD700]/70">{CONTRACT}</span>
               </p>
-              <button
-                onClick={() =>
+              <p
+                className={`w-full rounded-full px-5 py-2.5 text-center text-sm font-bold ${
                   judged
-                    ? toast.success("Split levels written to the contract ✦")
-                    : toast.error("Bounce the mix first.")
-                }
-                className="w-full rounded-full bg-[#FFD700] px-5 py-2.5 text-sm font-bold text-[#1A0B2E] transition hover:brightness-110"
+                    ? "bg-[#5EE6C5]/10 text-[#5EE6C5] ring-1 ring-[#5EE6C5]/40"
+                    : "bg-[#120722] text-purple-300/40 ring-1 ring-purple-400/10"
+                }`}
               >
-                Lock split on-chain
-              </button>
+                {judged ? "✦ Split locked on-chain" : "Bounce the mix to record the split on-chain"}
+              </p>
             </div>
           </div>
         </section>
