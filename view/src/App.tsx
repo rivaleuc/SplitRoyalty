@@ -1,9 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Toaster, toast } from "sonner";
-import { connectWallet, isWalletConnected } from "./genlayer";
-
-const CONTRACT = "0x2CFfF7dDEcc90C2b72e5BD19B1003Ef688cCb7C7";
+import { connectWallet, isWalletConnected, read, write, CONTRACT } from "./genlayer";
 
 type Role =
   | "Songwriter"
@@ -227,7 +225,7 @@ function App() {
     setJudged(false);
   };
 
-  const judge = () => {
+  const judge = async () => {
     const named = channels.filter((c) => c.name.trim());
     if (named.length < 2) {
       toast.error("Name at least two channels before bouncing the mix.");
@@ -235,18 +233,35 @@ function App() {
     }
     setJudging(true);
     setJudged(false);
-    toast.loading("AI is riding the faders…", { id: "mix" });
-    setTimeout(() => {
-      const pcts = computeSplit(channels);
+    toast.loading("Submitting project on-chain — AI is riding the faders…", { id: "mix" });
+    try {
+      const contributors = named.map((c) => ({ name: c.name.trim(), role: c.role }));
+      const title = `Studio Session — ${named.map((c) => c.name.trim()).join(", ").slice(0, 60)}`;
+      const description = named.map((c) => `${c.name.trim()}: ${c.role}`).join("; ");
+      // 1) create the project on-chain
+      await write("create_project", [title, JSON.stringify(contributors), description]);
+      // 2) locate it
+      const stats: any = await read("stats");
+      const key = String(Number(stats.total_projects) - 1);
+      // 3) AI judges the splits
+      await write("judge_splits", [key]);
+      // 4) read the real percentages
+      const res: any = await read("read_splits", [key]);
+      const splits: { name: string; percentage: number }[] = res.splits || [];
+      const byName = new Map(splits.map((s) => [String(s.name).toLowerCase(), Number(s.percentage)]));
       setChannels((cs) =>
-        cs.map((c, i) => ({ ...c, pct: c.name.trim() ? pcts[i] : 0 }))
+        cs.map((c) => ({
+          ...c,
+          pct: c.name.trim() ? byName.get(c.name.trim().toLowerCase()) ?? 0 : 0,
+        }))
       );
       setJudging(false);
       setJudged(true);
-      toast.success("Mix bounced — split is locked to the faders 🎚", {
-        id: "mix",
-      });
-    }, 2600);
+      toast.success("Split judged on-chain — locked to the faders 🎚", { id: "mix" });
+    } catch (e: any) {
+      setJudging(false);
+      toast.error("Mix failed", { id: "mix", description: e?.message?.slice(0, 120) ?? String(e) });
+    }
   };
 
   const master = judged
